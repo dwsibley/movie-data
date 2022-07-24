@@ -1,4 +1,5 @@
-from typing import Union
+from datetime import date, datetime
+from typing import List, Union
 from pydantic import BaseModel
 
 # class ItemBase(BaseModel):
@@ -32,6 +33,33 @@ class User(UserBase):
     class Config:
         orm_mode = True
 
+class NetflixNameBase(BaseModel):
+    name: str
+
+    class Config:
+        orm_mode = True
+
+class NetflixNameResponse(NetflixNameBase):
+    id: int
+
+class NetflixCountryBase(BaseModel):
+    name: str
+
+    class Config:
+        orm_mode = True
+
+class NetflixCountryResponse(NetflixCountryBase):
+    id: int
+
+class NetflixCategoryBase(BaseModel):
+    name: str
+
+    class Config:
+        orm_mode = True
+
+class NetflixCategoryResponse(NetflixCategoryBase):
+    id: int
+
 class NetflixTitleBase(BaseModel):
     show_id: str
     title: str
@@ -46,7 +74,7 @@ class NetflixTitleBase(BaseModel):
     
 class NetflixTitleCreate(NetflixTitleBase):
     date_added: Union[str, None]
-    directors: list
+    directors: list #TODO: could update this field and other to use Name Schema
     cast: list
     countries: list
     categories: list
@@ -55,3 +83,15 @@ class NetflixTitleCreate(NetflixTitleBase):
 
 class NetflixTitleResponse(NetflixTitleBase):
     id: int
+    #title_type_id: int
+    title_type: str
+    directors: List[NetflixNameResponse]
+    #directors: List[str]
+    cast: List[NetflixNameResponse]
+    countries: List[NetflixCountryResponse]
+    categories: List[NetflixCategoryResponse]
+    date_added: date
+    created_at: datetime
+    updated_at: datetime
+    #rating_id: int
+    rating: str

@@ -104,7 +104,16 @@ class NetflixTitle(Base):
     cast = relationship("NetflixName", secondary="netflix_title_cast_junction")
     countries = relationship("NetflixCountry", secondary="netflix_title_country_junction")
     categories = relationship("NetflixCategory", secondary="netflix_title_category_junction")
+    _title_type = relationship("NetflixTitleType")   #Reference: https://stackoverflow.com/questions/31439394/sqlalchemy-select-data-associated-with-foreign-key-not-the-foreign-key-itself
+    _rating = relationship("NetflixRating")
 
+    @property
+    def title_type(self):
+        return self._title_type.name
+
+    @property
+    def rating(self):
+        return self._rating.name
 
 class NetflixName(Base):
     __tablename__ = "netflix_names"
@@ -117,6 +126,9 @@ class NetflixName(Base):
     name = Column(String, unique=True, index=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+    # def __str__(self):  # seeing if this will help with response if wanted a simple list of strings - s
+    #     return self.name  
 
 class NetflixTitleDirectorJunction(Base):
     __tablename__ = "netflix_title_director_junction"
