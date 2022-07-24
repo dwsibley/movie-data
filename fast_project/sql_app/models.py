@@ -37,28 +37,42 @@ class User(Base):
 # reference: https://docs.sqlalchemy.org/en/14/core/type_basics.html
 # reference: https://medium.com/the-andela-way/how-to-create-django-like-choices-field-in-flask-sqlalchemy-1ca0e3a3af9d
 
-class NetflixTypeEnum(enum.Enum):
-    movie = 'Movie'
-    tv_show = 'TV Show'
+# class NetflixTypeEnum(enum.Enum):
+#     movie = 'Movie'
+#     tv_show = 'TV Show'
 
-class NetflixRatingEnum(enum.Enum):
-    pg_13 = 'PG-13'
-    tv_ma = 'TV-MA'
-    pg = 'PG'
-    tv_14 = 'TV-14'
-    tv_pg = 'TV-PG'
-    tv_y = 'TV-Y'
-    tv_y7 = 'TV-Y7'
-    r = 'R'
-    tv_g = 'TV-G'
-    g = 'G'
-    nc_17 = 'NC-17'
-    nr = 'NR'
-    tv_y7_fv = 'TV-Y7-FV'
-    ur = 'UR'
+# class NetflixRatingEnum(enum.Enum):
+#     pg_13 = 'PG-13'
+#     tv_ma = 'TV-MA'
+#     pg = 'PG'
+#     tv_14 = 'TV-14'
+#     tv_pg = 'TV-PG'
+#     tv_y = 'TV-Y'
+#     tv_y7 = 'TV-Y7'
+#     r = 'R'
+#     tv_g = 'TV-G'
+#     g = 'G'
+#     nc_17 = 'NC-17'
+#     nr = 'NR'
+#     tv_y7_fv = 'TV-Y7-FV'
+#     ur = 'UR'
 
 # connection.execute(t.insert(), {"value": MyEnum.two})
 # assert connection.scalar(t.select()) is MyEnum.two
+
+class NetflixTitleType(Base):
+    __tablename__ = "netflix_title_types"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+class NetflixRating(Base):
+    __tablename__ = "netflix_ratings"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
 class NetflixTitle(Base):
     __tablename__ = "netflix_titles"
@@ -68,14 +82,16 @@ class NetflixTitle(Base):
     id = Column(Integer, primary_key=True, index=True)
     #uuid = Column(UUID, unique=True, index=True, as_uuid=True) # see if making this primary key impacts performance
     show_id = Column(String, unique=True, index=True)
-    title_type = Column(Enum(NetflixTypeEnum)) # choices Movie, TV Show
+    #title_type = Column(Enum(NetflixTypeEnum)) # choices Movie, TV Show
+    title_type_id = Column(Integer, ForeignKey("netflix_title_types.id"))
     title = Column(String, index=True)
     #director = Column(String, index=True) # consider another table, consider list field, 
     #cast
     country = Column(String, index=True)
     date_added = Column(Date)
     release_year = Column(Integer)
-    rating = Column(Enum(NetflixRatingEnum))
+    #rating = Column(Enum(NetflixRatingEnum))
+    rating_id = Column(Integer, ForeignKey("netflix_ratings.id"))
     duration = Column(Integer)
     seasons = Column(Integer)
     #listed_in    #many to many relationship for genres or categories

@@ -51,22 +51,47 @@ def find_or_create_netflix_category(db: Session, name: str):
         db.refresh(db_netflix_category)
     return db_netflix_category
 
+def find_or_create_netflix_title_type(db: Session, name: str):
+    db_netflix_title_type = db.query(models.NetflixTitleType).filter(models.NetflixTitleType.name == name).first()
+    if not(db_netflix_title_type):
+        db_netflix_title_type = models.NetflixTitleType(
+            name = name,
+        )
+        db.add(db_netflix_title_type)
+        db.commit()
+        db.refresh(db_netflix_title_type)
+    return db_netflix_title_type
+
+def find_or_create_netflix_rating(db: Session, name: str):
+    db_netflix_rating = db.query(models.NetflixRating).filter(models.NetflixRating.name == name).first()
+    if not(db_netflix_rating):
+        db_netflix_rating = models.NetflixRating(
+            name = name,
+        )
+        db.add(db_netflix_rating)
+        db.commit()
+        db.refresh(db_netflix_rating)
+    return db_netflix_rating
+
 def create_netflix_title(db: Session, netflix_title: schemas.NetflixTitleCreate):
     # create or get database directors, cast and categories for junction tables
-    db_directors = [ find_or_create_netflix_name(Session, director) for director in netflix_title.directors ]
-    db_cast = [ find_or_create_netflix_name(Session, cast_member) for cast_member in netflix_title.cast ]
-    db_categories = [ find_or_create_netflix_category(Session, category) for category in netflix_title.categories ]
-    
+    db_directors = [ find_or_create_netflix_name(db, director) for director in netflix_title.directors ]
+    db_cast = [ find_or_create_netflix_name(db, cast_member) for cast_member in netflix_title.cast ]
+    db_categories = [ find_or_create_netflix_category(db, category) for category in netflix_title.categories ]
+    db_title_type = find_or_create_netflix_title_type(db, netflix_title.title_type)
+    db_rating = find_or_create_netflix_rating(db, netflix_title.rating)
     # create title
     db_netflix_title = models.NetflixTitle(
         show_id=netflix_title.show_id,
-        title_type=netflix_title.title_type,
         title=netflix_title.title,
+        title_type_id=db_title_type.id,
+        #title=netflix_title.title,
         country=netflix_title.country,
         #example date_added: March 15, 2017
-        date_added=datetime.strptime(netflix_title.date_added, '%m %d, %Y') if (netflix_title.date_added) is not None else None,
+        date_added=datetime.strptime(netflix_title.date_added, '%B %d, %Y') if (netflix_title.date_added) is not None else None,
         release_year=netflix_title.release_year,
-        rating=netflix_title.rating,
+        #rating=netflix_title.rating,
+        rating_id=db_rating.id,
         duration=netflix_title.duration,
         seasons=netflix_title.seasons,
         description=netflix_title.description

@@ -34,7 +34,6 @@ class User(UserBase):
 
 class NetflixTitleBase(BaseModel):
     show_id: str
-    title_type: str
     title: str
     country: str
     release_year: int
@@ -50,6 +49,8 @@ class NetflixTitleCreate(NetflixTitleBase):
     directors: list
     cast: list
     categories: list
+    rating: str
+    title_type: str
 
 class NetflixTitleResponse(NetflixTitleBase):
     id: int
