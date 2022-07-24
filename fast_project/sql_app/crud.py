@@ -51,6 +51,17 @@ def find_or_create_netflix_category(db: Session, name: str):
         db.refresh(db_netflix_category)
     return db_netflix_category
 
+def find_or_create_netflix_country(db: Session, name: str):
+    db_netflix_country = db.query(models.NetflixCountry).filter(models.NetflixCountry.name == name).first()
+    if not(db_netflix_country):
+        db_netflix_country = models.NetflixCountry(
+            name = name,
+        )
+        db.add(db_netflix_country)
+        db.commit()
+        db.refresh(db_netflix_country)
+    return db_netflix_country
+
 def find_or_create_netflix_title_type(db: Session, name: str):
     db_netflix_title_type = db.query(models.NetflixTitleType).filter(models.NetflixTitleType.name == name).first()
     if not(db_netflix_title_type):
@@ -77,6 +88,7 @@ def create_netflix_title(db: Session, netflix_title: schemas.NetflixTitleCreate)
     # create or get database directors, cast and categories for junction tables
     db_directors = [ find_or_create_netflix_name(db, director) for director in netflix_title.directors ]
     db_cast = [ find_or_create_netflix_name(db, cast_member) for cast_member in netflix_title.cast ]
+    db_countries = [ find_or_create_netflix_country(db, country) for country in netflix_title.countries ]
     db_categories = [ find_or_create_netflix_category(db, category) for category in netflix_title.categories ]
     db_title_type = find_or_create_netflix_title_type(db, netflix_title.title_type)
     db_rating = find_or_create_netflix_rating(db, netflix_title.rating)
@@ -86,7 +98,7 @@ def create_netflix_title(db: Session, netflix_title: schemas.NetflixTitleCreate)
         title=netflix_title.title,
         title_type_id=db_title_type.id,
         #title=netflix_title.title,
-        country=netflix_title.country,
+        #country=netflix_title.country,
         #example date_added: March 15, 2017
         date_added=datetime.strptime(netflix_title.date_added, '%B %d, %Y') if (netflix_title.date_added) is not None else None,
         release_year=netflix_title.release_year,
@@ -119,6 +131,16 @@ def create_netflix_title(db: Session, netflix_title: schemas.NetflixTitleCreate)
         db.add(db_title_cast_junction)
         db.commit()
         db.refresh(db_title_cast_junction)
+
+    # create country associations in junction table
+    for db_country in db_countries:
+        db_title_country_junction = models.NetflixTitleCountryJunction(
+            title_id=db_netflix_title.id,
+            country_id=db_country.id
+        )
+        db.add(db_title_country_junction)
+        db.commit()
+        db.refresh(db_title_country_junction)
 
     # create category associations in junction table
     for db_category in db_categories:

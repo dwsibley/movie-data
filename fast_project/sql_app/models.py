@@ -87,7 +87,7 @@ class NetflixTitle(Base):
     title = Column(String, index=True)
     #director = Column(String, index=True) # consider another table, consider list field, 
     #cast
-    country = Column(String, index=True)
+    #country = Column(String, index=True)
     date_added = Column(Date)
     release_year = Column(Integer)
     #rating = Column(Enum(NetflixRatingEnum))
@@ -102,6 +102,7 @@ class NetflixTitle(Base):
     #Reference: https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html#relationships-many-to-many
     directors = relationship("NetflixName", secondary="netflix_title_director_junction")
     cast = relationship("NetflixName", secondary="netflix_title_cast_junction")
+    countries = relationship("NetflixCountry", secondary="netflix_title_country_junction")
     categories = relationship("NetflixCategory", secondary="netflix_title_category_junction")
 
 
@@ -136,6 +137,26 @@ class NetflixTitleCastJunction(Base):
     cast_id = Column(Integer, ForeignKey("netflix_names.id"))
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+class NetflixCountry(Base):
+    __tablename__ = "netflix_countries"
+
+    id = Column(Integer, primary_key=True, index=True)
+    #uuid = Column(UUID, unique=True, index=True, as_uuid=True) # see if making this primary key impacts performance
+    name = Column(String, unique=True, index=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+class NetflixTitleCountryJunction(Base):
+    __tablename__ = "netflix_title_country_junction"
+
+    id = Column(Integer, primary_key=True, index=True)
+    #uuid = Column(UUID, unique=True, index=True, as_uuid=True) # see if making this primary key impacts performance
+    title_id = Column(Integer, ForeignKey("netflix_titles.id"))
+    country_id = Column(Integer, ForeignKey("netflix_countries.id"))    
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
 
 class NetflixCategory(Base):
     __tablename__ = "netflix_categories"

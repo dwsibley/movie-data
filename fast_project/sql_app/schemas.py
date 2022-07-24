@@ -35,7 +35,7 @@ class User(UserBase):
 class NetflixTitleBase(BaseModel):
     show_id: str
     title: str
-    country: str
+    #country: str
     release_year: int
     duration: Union[int, None]
     seasons: Union[int, None]
@@ -45,11 +45,12 @@ class NetflixTitleBase(BaseModel):
         orm_mode = True
     
 class NetflixTitleCreate(NetflixTitleBase):
-    date_added: str
+    date_added: Union[str, None]
     directors: list
     cast: list
+    countries: list
     categories: list
-    rating: str
+    rating: Union[str, None]
     title_type: str
 
 class NetflixTitleResponse(NetflixTitleBase):
