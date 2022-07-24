@@ -9,6 +9,7 @@ local/
 
 # sql lite database
 *.sqlite3
+*.db
 
 # python
 __pycache__/
