@@ -1,6 +1,7 @@
 import hashlib
 from datetime import datetime
 
+from sqlalchemy import select, or_
 from sqlalchemy.orm import Session
 
 from . import models, schemas
@@ -28,6 +29,27 @@ def create_user(db: Session, user: schemas.UserCreate):
 
 def get_netflix_title_by_show_id(db: Session, show_id: str):
     return db.query(models.NetflixTitle).filter(models.NetflixTitle.show_id == show_id).first()
+
+def get_netflix_titles(db: Session, skip: int = 0, limit: int = 100, search: str = None, netflix_title_filter = None):
+    #query = db.query(models.NetflixTitle).offset(skip).limit(limit).all()
+    query = select(models.NetflixTitle).offset(skip).limit(limit)
+    query = netflix_title_filter.filter(query)
+    if search is not None:
+        search = "%%%s%%" % search
+        # Reference: https://stackoverflow.com/questions/7942547/using-or-in-sqlalchemy
+        #search_columns = [models.NetflixTitle.title, models.NetflixTitle.description]
+        #for search_col in search_columns:
+        #    query = query.filter(search_col.ilike(search))
+        #    query = query.filter(search_col.ilike(search))
+        search_filters = [
+            models.NetflixTitle.title.ilike(search),
+            models.NetflixTitle.description.ilike(search),
+        ]
+        query = query.filter(or_(*search_filters))
+    query = netflix_title_filter.sort(query)
+    query = db.execute(query).scalars().all()
+
+    return query
 
 def find_or_create_netflix_name(db: Session, name: str):
     db_netflix_name = db.query(models.NetflixName).filter(models.NetflixName.name == name).first()
@@ -84,7 +106,26 @@ def find_or_create_netflix_rating(db: Session, name: str):
         db.refresh(db_netflix_rating)
     return db_netflix_rating
 
+def find_or_create_netflix_title_director_junction(db: Session, title_id: int, director_id: int):
+    db_title_director_junction = db.query(models.NetflixTitleDirectorJunction).filter(models.NetflixTitleDirectorJunction.title_id == title_id).filter(models.NetflixTitleDirectorJunction.director_id == director_id).first()
+    if not(db_title_director_junction):
+        db_title_director_junction = models.NetflixTitleDirectorJunction(
+            title_id=title_id,
+            director_id=director_id
+        )
+        db.add(db_title_director_junction)
+        db.commit()
+        db.refresh(db_title_director_junction)
+    return db_title_director_junction
+
+def delete_netflix_title_director_junction(db: Session, title_id: int, director_id: int):
+    #junction = db.query(models.NetflixTitleDirectorJunction).filter(models.NetflixTitleDirectorJunction.title_id == title_id).filter(models.NetflixTitleDirectorJunction.director_id == director_id).first()
+    result = db.query(models.NetflixTitleDirectorJunction).filter(models.NetflixTitleDirectorJunction.title_id == title_id).filter(models.NetflixTitleDirectorJunction.director_id == director_id).delete()
+    db.commit()
+    return result
+
 def create_netflix_title(db: Session, netflix_title: schemas.NetflixTitleCreate):
+    # TODO: marking this function for optimization
     # create or get database directors, cast and categories for junction tables
     db_directors = [ find_or_create_netflix_name(db, director) for director in netflix_title.directors ]
     db_cast = [ find_or_create_netflix_name(db, cast_member) for cast_member in netflix_title.cast ]
@@ -155,6 +196,47 @@ def create_netflix_title(db: Session, netflix_title: schemas.NetflixTitleCreate)
     #return title
     return db_netflix_title
 
+
+def update_netflix_title(db: Session, db_netflix_title: models.NetflixTitle, netflix_title: schemas.NetflixTitleCreate):
+    # find title type and rating
+    db_title_type = find_or_create_netflix_title_type(db, netflix_title.title_type)
+    db_rating = find_or_create_netflix_rating(db, netflix_title.rating)
+
+    # update title
+    db_netflix_title.title=netflix_title.title
+    db_netflix_title.title_type_id=db_title_type.id
+    #db_netflix_title.date_added=datetime.strptime(netflix_title.date_added, '%B %d, %Y').date() if (netflix_title.date_added) is not None else None,
+    db_netflix_title.date_added=datetime.strptime(netflix_title.date_added, '%B %d, %Y').date()
+    db_netflix_title.release_year=netflix_title.release_year
+    db_netflix_title.rating_id=db_rating.id
+    db_netflix_title.duration=netflix_title.duration
+    db_netflix_title.seasons=netflix_title.seasons
+    db_netflix_title.description=netflix_title.description  
+    db.commit()
+    db.refresh(db_netflix_title)
+    
+    # if director not in directors or exists and not already associated:
+    #  then create (if needed) and associate
+    for director in netflix_title.directors:
+        # find or create director entry
+        db_director = find_or_create_netflix_name(db, director)
+        # see if already associated and associate if needed
+        find_or_create_netflix_title_director_junction(db, title_id=db_netflix_title.id, director_id=db_director.id)
+
+    # if existing director not in new list (don't think order matters)
+    #   then delete association
+    for existing_director in db_netflix_title.directors:
+        if existing_director.name not in netflix_title.directors:
+            #delete association
+            delete_netflix_title_director_junction(db, title_id=db_netflix_title.id, director_id=existing_director.id)
+
+    # same thing with cast, country and categories
+
+    #return title
+    return db_netflix_title
+
+def partial_update_netflix_title(db: Session, show_id: str, netflix_title: schemas.NetflixTitlePatch):
+    pass
 # def get_items(db: Session, skip: int = 0, limit: int = 100):
 #     return db.query(models.Item).offset(skip).limit(limit).all()
 

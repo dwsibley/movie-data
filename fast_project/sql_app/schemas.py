@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import List, Union
+from typing import List, Union, Optional
 from pydantic import BaseModel
 
 # class ItemBase(BaseModel):
@@ -61,7 +61,7 @@ class NetflixCategoryResponse(NetflixCategoryBase):
     id: int
 
 class NetflixTitleBase(BaseModel):
-    show_id: str
+    #show_id: str
     title: str
     #country: str
     release_year: int
@@ -73,6 +73,7 @@ class NetflixTitleBase(BaseModel):
         orm_mode = True
     
 class NetflixTitleCreate(NetflixTitleBase):
+    show_id: str
     date_added: Union[str, None]
     directors: list #TODO: could update this field and other to use Name Schema
     cast: list
@@ -81,8 +82,37 @@ class NetflixTitleCreate(NetflixTitleBase):
     rating: Union[str, None]
     title_type: str
 
+class NetflixTitlePut(NetflixTitleBase):
+    date_added: Union[str, None]
+    directors: list #TODO: could update this field and other to use Name Schema
+    cast: list
+    countries: list
+    categories: list
+    rating: Union[str, None]
+    title_type: str
+
+class NetflixTitlePatch(BaseModel):
+    #show_id: str
+    title: Optional[str]
+    #country: str
+    release_year: Optional[int]
+    duration: Optional[int] = ...
+    seasons: Optional[int] = ...
+    description: Optional[str]
+    date_added: Optional[str] = ...
+    directors: Optional[list]
+    cast: Optional[list]
+    countries: Optional[list]
+    categories: Optional[list]
+    rating: Optional[str] = ...
+    title_type: Optional[str]
+
+    class Config:
+        orm_mode = True
+
 class NetflixTitleResponse(NetflixTitleBase):
     id: int
+    show_id: str
     #title_type_id: int
     title_type: str
     directors: List[NetflixNameResponse]
