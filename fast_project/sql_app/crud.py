@@ -124,8 +124,59 @@ def delete_netflix_title_director_junction(db: Session, title_id: int, director_
     db.commit()
     return result
 
+def find_or_create_netflix_title_cast_junction(db: Session, title_id: int, cast_id: int):
+    db_title_cast_junction = db.query(models.NetflixTitleCastJunction).filter(models.NetflixTitleCastJunction.title_id == title_id).filter(models.NetflixTitleCastJunction.cast_id == cast_id).first()
+    if not(db_title_cast_junction):
+        db_title_cast_junction = models.NetflixTitleCastJunction(
+            title_id=title_id,
+            cast_id=cast_id
+        )
+        db.add(db_title_cast_junction)
+        db.commit()
+        db.refresh(db_title_cast_junction)
+    return db_title_cast_junction
+
+def delete_netflix_title_cast_junction(db: Session, title_id: int, cast_id: int):
+    result = db.query(models.NetflixTitleCastJunction).filter(models.NetflixTitleCastJunction.title_id == title_id).filter(models.NetflixTitleCastJunction.cast_id == cast_id).delete()
+    db.commit()
+    return result
+
+def find_or_create_netflix_title_country_junction(db: Session, title_id: int, country_id: int):
+    db_title_country_junction = db.query(models.NetflixTitleCountryJunction).filter(models.NetflixTitleCountryJunction.title_id == title_id).filter(models.NetflixTitleCountryJunction.country_id == country_id).first()
+    if not(db_title_country_junction):
+        db_title_country_junction = models.NetflixTitleCountryJunction(
+            title_id=title_id,
+            country_id=country_id
+        )
+        db.add(db_title_country_junction)
+        db.commit()
+        db.refresh(db_title_country_junction)
+    return db_title_country_junction
+
+def delete_netflix_title_country_junction(db: Session, title_id: int, country_id: int):
+    result = db.query(models.NetflixTitleCountryJunction).filter(models.NetflixTitleCountryJunction.title_id == title_id).filter(models.NetflixTitleCountryJunction.country_id == country_id).delete()
+    db.commit()
+    return result
+
+def find_or_create_netflix_title_category_junction(db: Session, title_id: int, category_id: int):
+    db_title_category_junction = db.query(models.NetflixTitleCategoryJunction).filter(models.NetflixTitleCategoryJunction.title_id == title_id).filter(models.NetflixTitleCategoryJunction.category_id == category_id).first()
+    if not(db_title_category_junction):
+        db_title_category_junction = models.NetflixTitleCategoryJunction(
+            title_id=title_id,
+            category_id=category_id
+        )
+        db.add(db_title_category_junction)
+        db.commit()
+        db.refresh(db_title_category_junction)
+    return db_title_category_junction
+
+def delete_netflix_title_category_junction(db: Session, title_id: int, category_id: int):
+    result = db.query(models.NetflixTitleCategoryJunction).filter(models.NetflixTitleCategoryJunction.title_id == title_id).filter(models.NetflixTitleCategoryJunction.category_id == category_id).delete()
+    db.commit()
+    return result
+
 def create_netflix_title(db: Session, netflix_title: schemas.NetflixTitleCreate):
-    # TODO: marking this function for optimization
+    # TODO: marking this function for optimization and DRY-ness
     # create or get database directors, cast and categories for junction tables
     db_directors = [ find_or_create_netflix_name(db, director) for director in netflix_title.directors ]
     db_cast = [ find_or_create_netflix_name(db, cast_member) for cast_member in netflix_title.cast ]
@@ -222,7 +273,6 @@ def update_netflix_title(db: Session, db_netflix_title: models.NetflixTitle, net
         db_director = find_or_create_netflix_name(db, director)
         # see if already associated and associate if needed
         find_or_create_netflix_title_director_junction(db, title_id=db_netflix_title.id, director_id=db_director.id)
-
     # if existing director not in new list (don't think order matters)
     #   then delete association
     for existing_director in db_netflix_title.directors:
@@ -231,6 +281,26 @@ def update_netflix_title(db: Session, db_netflix_title: models.NetflixTitle, net
             delete_netflix_title_director_junction(db, title_id=db_netflix_title.id, director_id=existing_director.id)
 
     # same thing with cast, country and categories
+    for cast in netflix_title.cast:
+        db_cast_member = find_or_create_netflix_name(db, cast)
+        find_or_create_netflix_title_cast_junction(db, title_id=db_netflix_title.id, cast_id=db_cast_member.id)
+    for existing_cast_member in db_netflix_title.cast:
+        if existing_cast_member.name not in netflix_title.cast:
+            delete_netflix_title_cast_junction(db, title_id=db_netflix_title.id, cast_id=existing_cast_member.id)
+
+    for country in netflix_title.countries:
+        db_country = find_or_create_netflix_country(db, country)
+        find_or_create_netflix_title_country_junction(db, title_id=db_netflix_title.id, country_id=db_country.id)
+    for existing_country in db_netflix_title.countries:
+        if existing_country.name not in netflix_title.countries:
+            delete_netflix_title_country_junction(db, title_id=db_netflix_title.id, country_id=existing_country.id)
+
+    for category in netflix_title.categories:
+        db_category = find_or_create_netflix_category(db, category)
+        find_or_create_netflix_title_category_junction(db, title_id=db_netflix_title.id, category_id=db_category.id)
+    for existing_category in db_netflix_title.categories:
+        if existing_category.name not in netflix_title.categories:
+            delete_netflix_title_category_junction(db, title_id=db_netflix_title.id, category_id=existing_category.id)
 
     #return title
     return db_netflix_title
