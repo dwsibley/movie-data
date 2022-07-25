@@ -1,5 +1,6 @@
 from datetime import date, datetime
 from typing import List, Union, Optional
+from click import Option
 from pydantic import BaseModel
 
 # class ItemBase(BaseModel):
@@ -92,19 +93,21 @@ class NetflixTitlePut(NetflixTitleBase):
     title_type: str
 
 class NetflixTitlePatch(BaseModel):
-    #show_id: str
     title: Optional[str]
-    #country: str
     release_year: Optional[int]
-    duration: Optional[int] = ...
-    seasons: Optional[int] = ...
+    #duration: Optional[int] = ...
+    duration: Optional[int]
+    #seasons: Optional[int] = ...
+    seasons: Optional[int]
     description: Optional[str]
-    date_added: Optional[str] = ...
-    directors: Optional[list]
-    cast: Optional[list]
-    countries: Optional[list]
-    categories: Optional[list]
-    rating: Optional[str] = ...
+    #date_added: Optional[str] = ...
+    date_added: Optional[str]
+    directors: Optional[list] = []
+    cast: Optional[list] = []
+    countries: Optional[list] = []
+    categories: Optional[list] = []
+    #rating: Optional[str] = ...
+    rating: Optional[str]
     title_type: Optional[str]
 
     class Config:

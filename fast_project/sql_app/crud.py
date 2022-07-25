@@ -305,8 +305,67 @@ def update_netflix_title(db: Session, db_netflix_title: models.NetflixTitle, net
     #return title
     return db_netflix_title
 
-def partial_update_netflix_title(db: Session, show_id: str, netflix_title: schemas.NetflixTitlePatch):
-    pass
+def partial_update_netflix_title(db: Session, db_netflix_title: models.NetflixTitle, netflix_title: schemas.NetflixTitleCreate):
+    #update fields one at a time: lists will be added to - non-destructive update
+
+    # update title
+    if getattr(netflix_title, 'title'):
+        print('updating title')
+        db_netflix_title.title=netflix_title.title
+    # update title type
+    if getattr(netflix_title, 'title_type'):
+        db_title_type = find_or_create_netflix_title_type(db, netflix_title.title_type)
+        db_netflix_title.title_type_id=db_title_type.id
+    # update date_added
+    if getattr(netflix_title, 'date_added'):
+        db_netflix_title.date_added=datetime.strptime(netflix_title.date_added, '%B %d, %Y').date()
+    # update release_year
+    if getattr(netflix_title, 'release_year'):
+        db_netflix_title.release_year=netflix_title.release_year
+    # update rating
+    if getattr(netflix_title, 'rating'):
+        db_rating = find_or_create_netflix_rating(db, netflix_title.rating)
+        db_netflix_title.rating_id=db_rating.id
+    # update duration
+    if getattr(netflix_title, 'duration'):
+        db_netflix_title.duration=netflix_title.duration
+    # update seasons
+    if getattr(netflix_title, 'seasons'):
+        db_netflix_title.seasons=netflix_title.seasons
+    # update description
+    if getattr(netflix_title, 'description'):
+        db_netflix_title.description=netflix_title.description  
+    
+    db.commit()
+    db.refresh(db_netflix_title)
+    
+    # update directors - append if needed
+    if getattr(netflix_title, 'directors'):
+        for director in netflix_title.directors:
+            db_director = find_or_create_netflix_name(db, director)
+            find_or_create_netflix_title_director_junction(db, title_id=db_netflix_title.id, director_id=db_director.id)
+
+    # udpate cast - append if needed
+    if getattr(netflix_title, 'cast'):
+        for cast in netflix_title.cast:
+            db_cast_member = find_or_create_netflix_name(db, cast)
+            find_or_create_netflix_title_cast_junction(db, title_id=db_netflix_title.id, cast_id=db_cast_member.id)
+
+    # update countries - append if needed
+    if getattr(netflix_title, 'countries'):
+        for country in netflix_title.countries:
+            db_country = find_or_create_netflix_country(db, country)
+            find_or_create_netflix_title_country_junction(db, title_id=db_netflix_title.id, country_id=db_country.id)
+
+    # update categories - append if needed
+    if getattr(netflix_title, 'categories'):
+        for category in netflix_title.categories:
+            db_category = find_or_create_netflix_category(db, category)
+            find_or_create_netflix_title_category_junction(db, title_id=db_netflix_title.id, category_id=db_category.id)
+
+    #return title
+    return db_netflix_title
+
 # def get_items(db: Session, skip: int = 0, limit: int = 100):
 #     return db.query(models.Item).offset(skip).limit(limit).all()
 
