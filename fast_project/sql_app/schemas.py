@@ -92,6 +92,10 @@ class NetflixTitlePut(NetflixTitleBase):
     rating: Union[str, None]
     title_type: str
 
+# TODO: would like a way for Patch to allow setting something to None/null
+# this doesn't look doable with builtin Pydantic functionality
+# maybe custom class could work.  Reference: https://stackoverflow.com/questions/67699451/make-every-fields-as-optional-with-pydantic
+
 class NetflixTitlePatch(BaseModel):
     title: Optional[str]
     release_year: Optional[int]
