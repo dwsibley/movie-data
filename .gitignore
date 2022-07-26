@@ -21,5 +21,6 @@ __pycache__/
 *.log
 *.pot
 
+fast_project/local.env
 
 
