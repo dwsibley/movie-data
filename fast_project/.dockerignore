@@ -1,0 +1,21 @@
+# local files
+local/
+
+#mac
+.DS_Store  
+
+# VS code
+.project
+
+# sql lite database
+*.sqlite3
+*.db
+
+# python
+__pycache__/
+*.py[cod]
+# build/
+# dist/
+
+*.log
+*.pot
