@@ -1,6 +1,7 @@
-## Assignment
+This project originated from a coding assignement described [here](mddocs/original-assignment.md).  This is an exploration of FastAPI, SQLAlchemy, GCP and other tech as a solution for an API to manage movie data.  At this time a free (from kaggle.com) Netflix data set is being used.
 
-This project originating from a coding assignement with the criteria below.  [Results](#results) are then covered.
+The current status of the assignement is described here.
+  [Results](#results) are then covered.
 
 ### Data
 * Pick a Data Source of your choice
