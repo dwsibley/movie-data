@@ -1,6 +1,6 @@
 ## Assignment
 
-This project originating from a coding assignement with the following criteria:
+This project originating from a coding assignement with the criteria below.  [Results](##Results) are then covered.
 
 ### Data
 * Pick a Data Source of your choice
@@ -40,7 +40,7 @@ For the data set I chose the Netflix data but labled the model and API as such a
 
 - [x] Rows of data with search, filter, sorting, and pagination - Pagination comes with Fast API.  I implemented a basic search for now based on title and description.  For filtering I used fastapi-filter which is easy to add quick filtering but has some limitations (no apparent support for date/datetime ranges).
 
-- [ ] Aggregated summary data.  Not sure exactly what this is meant to cover, but for now no count, max, min etc. optinos opened up through the API.  Filtering and then counting, measuring locally, etc. would be a current option.  I looked for tooling for this sort of thing but didn't find anything in the time searching.  Would like circle back to this.
+- [ ] Aggregated summary data.  Not sure exactly what this is meant to cover, but for now no count, max, min etc. options opened up through the API.  Filtering and then counting, measuring locally, etc. would be a current option.  I looked for tooling for this sort of thing but didn't find anything in the time searching.  Would like circle back to this.
 
 - [x] Modify data in the database - PUT and PATCH methods implemented for Netflix titles.
 
