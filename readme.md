@@ -53,6 +53,6 @@ For the data set I chose the Netflix data but labled the model and API as such a
 - [x] Deploy the application in Google Cloud (Use free tier with new account setup).  Preferably you can use managed services (App Engine, Cloud Run, CloudSQL, etc.).  Done using Cloud Run and Cloud SQL primarily.
 
 #### Extra Points
-- [ ] Unit Testing implemented
+- [ ] Unit Testing implemented.  I haven't added any unit testing though I do have scripts used to test end points.
 - [x] Continuous Integration/Continuous Deployment features set up (CI/CD) E.g. CircleCI, Travis, GCP Cloud Build, Github Actions, etc. Not a full CI/CD flow but a simple solution for now for deployments integrating github to Cloud Build where a tag with "release" automatically gets built and deployed.
-- [ ] Authentication implemented so that only authenticated users are capable of accessing the API.
+- [ ] Authentication implemented so that only authenticated users are capable of accessing the API.  Currently working on this.  May start with a simple token needed for API.
