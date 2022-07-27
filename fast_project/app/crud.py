@@ -312,7 +312,6 @@ def partial_update_netflix_title(db: Session, db_netflix_title: models.NetflixTi
 
     # update title
     if getattr(netflix_title, 'title'):
-        print('updating title')
         db_netflix_title.title=netflix_title.title
     # update title type
     if getattr(netflix_title, 'title_type'):
