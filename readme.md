@@ -1,6 +1,6 @@
 ## Assignment
 
-This project originating from a coding assignement with the criteria below.  [Results](##Results) are then covered.
+This project originating from a coding assignement with the criteria below.  [Results](#results) are then covered.
 
 ### Data
 * Pick a Data Source of your choice
@@ -23,7 +23,7 @@ This project originating from a coding assignement with the criteria below.  [Re
 * E.g. CircleCI, Travis, GCP Cloud Build, Github Actions, etc.
 * Authentication implemented so that only authenticated users are capable of accessing the API.
 
-## Results
+## Results <a name="results"></a>
 
 ### Decisions
 
