@@ -1,4 +1,8 @@
-from fastapi import Depends, FastAPI, HTTPException
+from email import header
+import os
+
+from fastapi import Depends, FastAPI, HTTPException, Header
+from fastapi.security import APIKeyHeader
 from pydantic import DurationError
 from sqlalchemy.orm import Session
 
@@ -48,6 +52,16 @@ class NetflixTitleFilter(Filter):
     class Constants(Filter.Constants):
         model = models.NetflixTitle    
 
+async def verify_api_key(authorization: str = Header()):
+    valid = False
+    header_prefix = 'Token '
+    if authorization.find(header_prefix) == 0:
+        token = authorization[len(header_prefix):]
+        if token == os.environ.get('GENERAL_API_KEY'):
+            valid = True
+            print('Token valid!!!')
+    if not(valid):
+        raise HTTPException(status_code=401, detail="invalid token")
 
 # End points 
 @app.post("/users/", response_model=schemas.User)
@@ -69,8 +83,9 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
-@app.get("/netflix/titles/", response_model=list[schemas.NetflixTitleResponse], )
+@app.get("/netflix/titles/",  response_model=list[schemas.NetflixTitleResponse], dependencies=[Depends(verify_api_key)])
 #def read_netflix_titles(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+#def read_netflix_titles(authorization: str | None = Header(default=None), netflix_title_filter: NetflixTitleFilter = FilterDepends(NetflixTitleFilter), skip: int = 0, limit: int = 100, search: str = None, db: Session = Depends(get_db)):
 def read_netflix_titles(netflix_title_filter: NetflixTitleFilter = FilterDepends(NetflixTitleFilter), skip: int = 0, limit: int = 100, search: str = None, db: Session = Depends(get_db)):
     netflix_titles = crud.get_netflix_titles(db, skip=skip, limit=limit, search=search, netflix_title_filter=netflix_title_filter)
     return netflix_titles
