@@ -5,8 +5,9 @@ To-do list for ideas, improvements etc.
 - [ ] Code Cleanup.  Dry opportunities...starting with crud.py file, etc.
 - [ ] API versioning.
 - [ ] Add authentication. Just API token first then user/pass driven for API.
+- [ ] Try out poetry.
 - [ ] Authorization - set up permission levels.
-- [ ] Working user model and maybe even user registration flow.
+- [ ] Create user registration flow.
 - [ ] Try migrations with SQLAlchemy.  Look into Alembic.
 - [ ] Consider simplifying or having multiple response schemas.  For example respond list values can be simple strings as in POST instead of including id, name object.
 - [ ] Work on some simple UI elements and look into any hosting solutions in GCP (object storage hosting like AWS an option?).
