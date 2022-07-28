@@ -1,5 +1,7 @@
 ## Assignment
 
+Here is the original assignment.  The status for this worked is tracked [here](assignment-status.md).
+
 ### Data
 * Pick a Data Source of your choice
 * Optional: Netflix shows: https://www.kaggle.com/shivamb/netflix-shows/data

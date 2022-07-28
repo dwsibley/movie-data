@@ -1,4 +1,6 @@
-## Results
+## Assignment Status
+
+Decisions and progress made on the original [assignment](original-assignment.md).
 
 ### Decisions
 
