@@ -24,7 +24,7 @@ For the data set, I chose the Netflix data but labled the model and API as such 
 #### Main objectivies
 - [x] Create API and documentation -> API created with Fast API which has a nice builtin OpenAPI page for documentation.
 
-- [x] Rows of data with search, filter, sorting, and pagination -> Pagination comes with Fast API.  I implemented a basic search for now based on title and description.  For filtering I used fastapi-filter which is easy to add quick filtering but has some limitations (no apparent support for date/datetime ranges).  Also I think the filtering has issues on the OpenAPI page.
+- [x] Rows of data with search, filter, sorting, and pagination -> Pagination comes with Fast API.  I implemented a basic search for now based on title and description.  For filtering I used fastapi-filter which is easy to add quick filtering but has some limitations (no apparent support for date/datetime ranges).  ~~Also I think the filtering has issues on the OpenAPI page~~.  This was related to known issue above.^
 
 - [ ] Aggregated summary data.  -> Not sure exactly what this is meant to cover, but for now no count, max, min etc. options opened up through the API.  Filtering and then counting, measuring locally, etc. would be a current option.  I looked for tooling for this sort of thing but didn't find anything in the time searching.  Would like circle back to this.
 
