@@ -16,6 +16,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     #uuid = Column(UUID, unique=True, index=True, as_uuid=True) # see if making this primary key impacts performance
+    username = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
     password = Column(String) # save hashed at least
     is_active = Column(Boolean, default=True)
