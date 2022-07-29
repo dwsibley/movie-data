@@ -2,8 +2,6 @@
 
 Copy of original assignment [here](original-assignment.md).
 
-UPDATE: Noticed that filtering seems to be having issues after last night's update (7/28).  Looking into it.
-
 ### Summary
 
 I enjoyed this project and learned a good bit along the way.  I got the chance to use some tech I haven't used much before.  I constructed the app similarly to how I've worked on other applications in the past by first getting a "MVP" with core features and using key components.  At this time I'd say the application is in that stage but needs more iterations for cleaning, reorganizing, productionizing deployments, etc.  And certainly the cloud components would be updated if something like this were to run at web scale.
@@ -15,6 +13,11 @@ I chose FastAPI and SQLAlchemy since those seem to be used by the company.  I al
 I used SQLite originally to try out FastAPI/SQLAlchemy and work locally.  I used Cloud SQL with Postgres for the deployment.
 
 For the data set, I chose the Netflix data but labled the model and API as such and could add other models or an combination model in the future.
+
+### Known Issues
+
+* Noticed that filtering seems to be having issues after last night's update (7/28). Looking into it.
+  * UPDATE: Looks to be related to Title type and Rating only. More needed to properly construct select, filtering combination (SQLAlchemy properties are not enough). Predates latest release too.
 
 ### Progress 
 
