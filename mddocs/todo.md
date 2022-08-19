@@ -2,10 +2,12 @@ To-do list for ideas, improvements etc.
 
 - [ ] More filters - ranges for integers, ranges for dates.
 - [ ] Folder and module layout.  I like to a differenet folder/module layout that is more modular and extensible to add other models, sets of end points etc.  Consider versioning.
+  - [ ] Try horizonal layout too (not folders with routes, models, etc. but all routes, models together)
 - [ ] Code Cleanup.  Dry opportunities...starting with crud.py file, etc.
 - [ ] API versioning.
 - [x] Add authentication.
-- [ ] Try out poetry.
+- [x] Try out poetry.
+- [ ] Set up terraform for cloud components.
 - [ ] Authorization - set up permission levels.
 - [ ] Create user registration flow.
 - [ ] Try migrations with SQLAlchemy.  Look into Alembic.
